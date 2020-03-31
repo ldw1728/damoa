@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "420706532733",
+    "firebase_url": "https://damoa2020-f6f88.firebaseio.com",
+    "project_id": "damoa2020-f6f88",
+    "storage_bucket": "damoa2020-f6f88.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420706532733:android:2c8431facff09729626014",
+        "android_client_info": {
+          "package_name": "com.project.damoa2020"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "420706532733-jcbrsl0jhck5ebmu75gln54h73q5b8ul.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtZhlTBbqtYNKLOApKh97KmTBqhGCc_8c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420706532733-jcbrsl0jhck5ebmu75gln54h73q5b8ul.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
