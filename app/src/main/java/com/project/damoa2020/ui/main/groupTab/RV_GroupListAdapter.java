@@ -2,6 +2,7 @@ package com.project.damoa2020.ui.main.groupTab;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.project.damoa2020.MainActivity;
 import com.project.damoa2020.R;
+import com.project.damoa2020.controller.Common;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -49,7 +51,8 @@ public class RV_GroupListAdapter extends RecyclerView.Adapter<RV_GroupListAdapte
         final GroupInfo group = groups.get(position);
 
         if(group.getImageString() != null){
-            holder.iv_groupImage.setImageBitmap(null);
+            Bitmap bitMap = Common.StringToBitmap(group.getImageString());
+            holder.iv_groupImage.setImageBitmap(bitMap);
         }
 
         holder.tv_title.setText(group.getTitle());

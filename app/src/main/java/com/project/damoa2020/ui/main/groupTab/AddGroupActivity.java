@@ -1,5 +1,6 @@
 package com.project.damoa2020.ui.main.groupTab;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -7,6 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -27,6 +30,9 @@ import com.project.damoa2020.R;
 import com.project.damoa2020.controller.Common;
 import com.project.damoa2020.ui.main.PlaceholderFragment;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,6 +62,9 @@ public class AddGroupActivity extends AppCompatActivity {
     private RecyclerView rv_addGroupFriendsList;
     private Button btn_addGroupFriendsComplete;
     private ImageButton ib_addGroupNext;
+    private ImageButton ib_gallery;
+
+    private Bitmap groupIMG = null;
 
 
     public GroupInfo getGroupInfo() {
@@ -92,6 +101,8 @@ public class AddGroupActivity extends AppCompatActivity {
         sp_groupNOP = findViewById(R.id.sp_groupNOP);
         sp_groupHour = findViewById(R.id.sp_addgroup_hour);
         sp_groupMinutes = findViewById(R.id.sp_addgroup_minutes);
+        iv_groupIMG = findViewById(R.id.iv_groupImage);
+        ib_gallery = findViewById(R.id.ib_gallery);
 
         GroupInfoFragmentSetEvent();
         initSpinners();
@@ -187,6 +198,16 @@ public class AddGroupActivity extends AppCompatActivity {
     }
 
     public void GroupInfoFragmentSetEvent() {
+        ib_gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent, 0);
+            }
+        });
+
         ib_addGroupNext.setOnClickListener(new View.OnClickListener() { //다음 버튼 클릭 시 프래그먼트 전환
             @Override
             public void onClick(View v) {
@@ -199,6 +220,28 @@ public class AddGroupActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) { //갤러리에서 가져온 사진을 이미지뷰에 표시
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                try {
+                    InputStream in = getContentResolver().openInputStream(data.getData());
+                    Bitmap img = BitmapFactory.decodeStream(in);
+                    in.close();
+
+                    groupIMG = img;
+                    iv_groupIMG.setImageBitmap(img);
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public boolean groupInfoFragmentCheck() {
@@ -237,6 +280,8 @@ public class AddGroupActivity extends AppCompatActivity {
                     String time = (hour < 10) ? "0" + hour : "" + hour;
                     time += ((int) sp_groupMinutes.getSelectedItem() > 0) ? "" + sp_groupMinutes.getSelectedItem() : "0" + sp_groupMinutes.getSelectedItem();
                     groupInfo = new GroupInfo(title, detail, date, time, (Integer) sp_groupNOP.getSelectedItem(), null, null);
+                    if(groupIMG != null)
+                    groupInfo.setImageString(Common.bitmapToString(groupIMG));
                     // groupInfo 객체를 생성 하고 정보들을 기입.
                     return true;
 
@@ -249,7 +294,8 @@ public class AddGroupActivity extends AppCompatActivity {
                 String time = (hour < 10) ? "0" + hour : "" + hour;
                 time += ((int) sp_groupMinutes.getSelectedItem() > 0) ? "" + sp_groupMinutes.getSelectedItem() : "0" + sp_groupMinutes.getSelectedItem();
                 groupInfo = new GroupInfo(title, detail, date, time, (Integer) sp_groupNOP.getSelectedItem(), null, null);
-
+                if(groupIMG != null)
+                    groupInfo.setImageString(Common.bitmapToString(groupIMG));
                 // groupInfo 객체를 생성 하고 정보들을 기입.
                 return true;
             }
@@ -267,7 +313,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 if (groupInfo != null) {
                     groupInfo.getParticipants().put(MainActivity.loginUser.getEmail(), false);
                     Intent intent = new Intent();
-                    intent.putExtra("group", (Serializable) groupInfo);
+                    intent.putExtra("group", groupInfo);
                     setResult(3, intent);
                     finish();
 
