@@ -1,14 +1,12 @@
 package com.project.damoa2020.ui.main.groupTab;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import androidx.core.util.Consumer;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +15,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.project.damoa2020.MainActivity;
 import com.project.damoa2020.R;
 import com.project.damoa2020.controller.DBC;
-import com.project.damoa2020.ui.main.PlaceholderFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,11 +26,13 @@ public class GroupTab {
     private MainActivity main;
 
     private FloatingActionButton fab_addGroup;
-    private FloatingActionButton fab_searchGroup;
+    private FloatingActionButton ib_searchGroup;
     private RecyclerView rv_groupList;
     private RV_GroupListAdapter adapter;
+    private AutoCompleteTextView et_searchGroup;
 
     private ArrayList<GroupInfo> groups;
+    private ArrayList<String> groupsName;
 
     public ArrayList<GroupInfo> getGroups() {
         return groups;
@@ -52,8 +51,9 @@ public class GroupTab {
 
     public void init() {
         fab_addGroup = main.findViewById(R.id.fab_addGroup);
-        fab_searchGroup = main.findViewById(R.id.fab_searchGroup);
+        ib_searchGroup = main.findViewById(R.id.ib_searchGroup);
         rv_groupList = main.findViewById(R.id.rv_groupList);
+        et_searchGroup = main.findViewById(R.id.et_searchGroup);
         setEvent();
         initGroupRecyclerView();
         getGroupsFromDB();
@@ -104,10 +104,18 @@ public class GroupTab {
             }
         });
 
-        fab_searchGroup.setOnClickListener(new View.OnClickListener() {
+        ib_searchGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String temp = "";
+                if(!( temp = et_searchGroup.getText().toString()).equals("")){
+                    Intent intent = new Intent();
+                    intent.putExtra("groupsName", temp.trim());
+                    main.startActivityForResult(intent, 4);
+                }
+                else{
+                    Toast.makeText(main, "그룹명을 입력하세요", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

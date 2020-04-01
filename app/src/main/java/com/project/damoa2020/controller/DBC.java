@@ -54,25 +54,6 @@ public class DBC {
             }
         });
     }
-/*
-    public static void onChangeGroupsData(final GroupTab groupTab){
-
-        for(GroupInfo g : groupTab.getGroups()){
-            db.collection("groups").document(g.getGroupID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                    if (e != null) {
-                        Log.w("onChange()snapshot : ", e);
-                    }
-                    Log.d("onChangeGroupsData", "onChangeGroupsData----------");
-                   groupTab.getGroupsFromDB();
-                }
-            });
-        }
-
-
-    }
-    */
 
 
     public static void addDataToDB(final MainActivity main, String collection, final Object o) {
@@ -161,6 +142,21 @@ public class DBC {
                 consumer.accept(null);
                 Log.d("getDataFromDB : ", "groups3");
             }
+        } else if(collection.contains("search")){
+            final String gn = collection.split(" ")[1];
+            final ArrayList<GroupInfo> foundGroups = new ArrayList<>();
+            db.collection("groups").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        GroupInfo temp = document.toObject(GroupInfo.class);
+                        if(temp.getTitle().contains(gn)){
+                            foundGroups.add(temp);
+                        }
+                    }
+                    consumer.accept(foundGroups);
+                }
+            });
         }
     }
 
