@@ -115,6 +115,7 @@ public class MapController {
     public void executeOperation(){
 
         if(makingGroup){ //그룹생성중일때의 맵 작업라인
+            gMap.clear();
             Log.d("executeOperation : ", "entered executeOperation");
             final GroupInfo g = mapTab.getCreatingGroup();
             if(g != null){

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,12 +79,16 @@ public class MainActivity extends AppCompatActivity {
                     viewPager.setCurrentItem(0);
                     createTabs(1, mapTab.getFragment());
                     mapTab.setCreatingGroup((GroupInfo)o);
+                    break;
+                case 4:
+                    groupTab.addFoundGroup((GroupInfo)o);
+                    break;
             }
         }
     }
 
     public void addGroup(GroupInfo g){
-        groupTab.addGroup(g);
+        groupTab.createGroup(g);
         MapController.makingGroup = false;
         createTabs(1, mapTab.getFragment());
     }

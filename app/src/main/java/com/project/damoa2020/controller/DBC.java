@@ -144,6 +144,7 @@ public class DBC {
             }
         } else if(collection.contains("search")){
             final String gn = collection.split(" ")[1];
+            Log.d("groupName : ", gn);
             final ArrayList<GroupInfo> foundGroups = new ArrayList<>();
             db.collection("groups").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override

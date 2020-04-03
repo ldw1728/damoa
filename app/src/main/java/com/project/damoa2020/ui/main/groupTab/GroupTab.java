@@ -1,9 +1,12 @@
 package com.project.damoa2020.ui.main.groupTab;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.core.util.Consumer;
@@ -26,10 +29,10 @@ public class GroupTab {
     private MainActivity main;
 
     private FloatingActionButton fab_addGroup;
-    private FloatingActionButton ib_searchGroup;
+    private ImageButton ib_searchGroup;
     private RecyclerView rv_groupList;
     private RV_GroupListAdapter adapter;
-    private AutoCompleteTextView et_searchGroup;
+    private EditText et_searchGroup;
 
     private ArrayList<GroupInfo> groups;
     private ArrayList<String> groupsName;
@@ -109,7 +112,7 @@ public class GroupTab {
             public void onClick(View v) {
                 String temp = "";
                 if(!( temp = et_searchGroup.getText().toString()).equals("")){
-                    Intent intent = new Intent();
+                    Intent intent = new Intent(main, SearchGroupActivity.class);
                     intent.putExtra("groupsName", temp.trim());
                     main.startActivityForResult(intent, 4);
                 }
@@ -120,8 +123,31 @@ public class GroupTab {
         });
     }
 
-    public void addGroup(GroupInfo group) {
+    public void createGroup(GroupInfo group) {
         DBC.addDataToDB(main, "groups", group);
+    }
+
+    public void addFoundGroup(final GroupInfo group){
+
+        final HashMap<String, Object> data = new HashMap<>();
+        data.put("participants", group.getParticipants());
+        DBC.updateData(group, data, new Consumer<Boolean>() {
+            @Override
+            public void accept(Boolean aBoolean) {
+                if(aBoolean){
+                    ArrayList<String> groups = MainActivity.loginUser.getGroups();
+                    groups.add(group.getGroupID());
+                    data.clear();
+                    data.put("groups", groups);
+                    DBC.updateUser(MainActivity.loginUser, data, new Consumer<Boolean>() {
+                        @Override
+                        public void accept(Boolean aBoolean) {
+                            Toast.makeText(main, "그룹이 추가 되었습니다.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public void deleteGroup(final GroupInfo group) {

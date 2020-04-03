@@ -1,5 +1,6 @@
 package com.project.damoa2020.ui.main.groupTab;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,11 +27,13 @@ import java.util.Set;
 public class RV_GroupListAdapter extends RecyclerView.Adapter<RV_GroupListAdapter.ViewHolder> {
 
     private ArrayList<GroupInfo> groups;
-    private MainActivity main;
 
-    public RV_GroupListAdapter(MainActivity main, ArrayList<GroupInfo> groups){
+    private Activity activity = null;
+
+
+    public RV_GroupListAdapter(Activity ac, ArrayList<GroupInfo> groups){
         this.groups = groups;
-        this.main = main;
+        activity = ac;
     }
 
     public void setGroups(ArrayList<GroupInfo> groups){
@@ -75,21 +79,24 @@ public class RV_GroupListAdapter extends RecyclerView.Adapter<RV_GroupListAdapte
         holder.layout_groupListItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                main.focusingClickedGroup(group);
+                if(activity instanceof MainActivity){
+                    ((MainActivity)activity).focusingClickedGroup(group);
+                }
             }
         });
-
-
-
-
-
     }
 
     public void showInfo(final GroupInfo group, String date){
         String infoStr;
-        AlertDialog.Builder builder = new AlertDialog.Builder(main);
-        builder.setTitle(group.getTitle());
+        AlertDialog.Builder builder = null;
+        if(activity instanceof MainActivity){
+            builder = new AlertDialog.Builder((MainActivity)activity);
+        }
+        else if(activity instanceof SearchGroupActivity){
+            builder = new AlertDialog.Builder((SearchGroupActivity)activity);
+        }
 
+        builder.setTitle(group.getTitle());
         infoStr = group.getDetail_info()+"\n\n" +"시간 : " +date + "\n";
 
         infoStr += "장소 : "+group.getAddress()+"\n\n";
@@ -107,13 +114,29 @@ public class RV_GroupListAdapter extends RecyclerView.Adapter<RV_GroupListAdapte
         }
 
         builder.setMessage(infoStr);
+        if(activity instanceof MainActivity){
+            builder.setPositiveButton("그룹나가기", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ((MainActivity)activity).getGroupTab().deleteGroup(group);
+                }
+            });
+        }
+        else{
+            builder.setPositiveButton("그룹 추가", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(group.getParticipants().containsKey(MainActivity.loginUser.getEmail())){
+                        Toast.makeText(activity, "이미 소속된 그룹입니다.", Toast.LENGTH_LONG).show();
+                    }else{
+                        group.getParticipants().put(MainActivity.loginUser.getEmail(), false);
+                        ((SearchGroupActivity)activity).setResult(group);
+                    }
 
-        builder.setPositiveButton("그룹나가기", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                main.getGroupTab().deleteGroup(group);
-            }
-        });
+                }
+            });
+        }
+
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -122,6 +145,8 @@ public class RV_GroupListAdapter extends RecyclerView.Adapter<RV_GroupListAdapte
         });
         builder.show();
     }
+
+
 
 
     @Override
