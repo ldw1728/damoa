@@ -60,7 +60,7 @@ public class AddGroupActivity extends AppCompatActivity {
     private Spinner sp_groupYear, sp_groupMonth, sp_groupDay, sp_groupNOP, sp_groupHour, sp_groupMinutes;
 
     private RecyclerView rv_addGroupFriendsList;
-    private Button btn_addGroupFriendsComplete;
+    private ImageButton btn_addGroupFriendsComplete;
     private ImageButton ib_addGroupNext;
     private ImageButton ib_gallery;
 

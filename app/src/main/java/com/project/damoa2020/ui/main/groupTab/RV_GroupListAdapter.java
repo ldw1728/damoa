@@ -108,7 +108,7 @@ public class RV_GroupListAdapter extends RecyclerView.Adapter<RV_GroupListAdapte
         while(iter.hasNext()){
            String email = iter.next();
            if(group.getParticipants().get(email)){
-               email += "   도착";
+               email += "   도착!";
            }
             infoStr += email +"\n";
         }
